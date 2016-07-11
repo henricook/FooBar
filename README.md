@@ -1,5 +1,3 @@
-# Vanilla Project for scala.js
-
-to generate javascript: `sbt fastOptJS`
-
-then open `index-dev.html` with your browser
+# Website for FooBar
+ 
+ Attempt to write a website to advertise my future scala training using scala.js, scalacss and other goodies.
