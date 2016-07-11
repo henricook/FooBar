@@ -1,26 +1,27 @@
-import sbt._
 
-enablePlugins(ScalaJSPlugin, SbtWeb)
-
-name := "FooBar"
-version := "0.1"
-scalaVersion := "2.11.8"
-resolvers += Resolver.sonatypeRepo("releases")
-
-libraryDependencies ++= Seq(
-  "org.scala-js"    %%% "scalajs-dom"    % "0.9.0",
-  "com.lihaoyi"     %%% "scalatags"      % "0.5.4",
-  "be.doeraene"     %%% "scalajs-jquery" % "0.9.0",
-
-  "org.scalatest"   %%% "scalatest"      % "3.0.0-M7"  % "test"
+val app = crossProject.settings(
+  name := "FooBar",
+  version := "0.1",
+  scalaVersion := "2.11.8",
+  unmanagedSourceDirectories in Compile += baseDirectory.value  / "shared" / "src" / "main" / "scala",
+  libraryDependencies ++= Seq(
+    "com.lihaoyi"                  %%% "scalatags"     % "0.5.0",
+    "com.lihaoyi"                  %%% "upickle"       % "0.4.1",
+    "com.github.japgolly.scalacss" %%% "core"          % "0.4.1",
+    "com.github.japgolly.scalacss" %%% "ext-scalatags" % "0.4.1"
+  )
+).jsSettings(
+  libraryDependencies ++= Seq(
+    "org.scala-js" %%% "scalajs-dom" % "0.8.0"
+  )
+).jvmSettings(
+  libraryDependencies ++= Seq(
+    "org.http4s" %% "http4s-dsl"          % "0.14.1a",
+    "org.http4s" %% "http4s-blaze-server" % "0.14.1a"
+  )
 )
 
-// scala.js
-skip in packageJSDependencies := false
-jsDependencies += "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js"
-persistLauncher in Compile := true
-persistLauncher in Test := false
-
-// sbt-less
-LessKeys.compress in Assets := false
-includeFilter in (Assets, LessKeys.less) := "main.less"
+lazy val appJS = app.js
+lazy val appJVM = app.jvm.settings(
+  (resources in Compile) += (fastOptJS in (appJS, Compile)).value.data
+)
