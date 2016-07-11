@@ -1,3 +1,4 @@
+import NativePackagerKeys._
 
 val app = crossProject.settings(
   name := "FooBar",
